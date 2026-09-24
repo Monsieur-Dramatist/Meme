@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36414.22 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemeApp.WinForms", "MemeApp.WinForms\MemeApp.WinForms.csproj", "{B00B6447-9F23-45C6-A6E8-A82FA99A50AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemeApp.Console", "MemeApp.Console\MemeApp.Console.csproj", "{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B00B6447-9F23-45C6-A6E8-A82FA99A50AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B00B6447-9F23-45C6-A6E8-A82FA99A50AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B00B6447-9F23-45C6-A6E8-A82FA99A50AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

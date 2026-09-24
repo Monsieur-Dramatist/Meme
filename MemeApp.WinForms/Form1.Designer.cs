@@ -40,7 +40,10 @@
             button2 = new Button();
             button3 = new Button();
             button4 = new Button();
+            pictureBox1 = new PictureBox();
+            button5 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // dataGridView1
@@ -49,10 +52,10 @@
             dataGridView1.BackgroundColor = Color.White;
             dataGridView1.BorderStyle = BorderStyle.None;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 45);
+            dataGridView1.Location = new Point(47, 538);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
-            dataGridView1.Size = new Size(567, 614);
+            dataGridView1.Size = new Size(567, 227);
             dataGridView1.TabIndex = 0;
             // 
             // textBox1
@@ -146,7 +149,7 @@
             // 
             button3.Font = new Font("Script MT Bold", 18F, FontStyle.Bold);
             button3.ForeColor = Color.DarkSlateBlue;
-            button3.Location = new Point(770, 512);
+            button3.Location = new Point(770, 598);
             button3.Name = "button3";
             button3.Size = new Size(380, 49);
             button3.TabIndex = 9;
@@ -157,12 +160,32 @@
             // 
             button4.Font = new Font("Script MT Bold", 18F, FontStyle.Bold);
             button4.ForeColor = Color.DarkSlateBlue;
-            button4.Location = new Point(770, 607);
+            button4.Location = new Point(770, 713);
             button4.Name = "button4";
             button4.Size = new Size(380, 52);
             button4.TabIndex = 10;
             button4.Text = "По категориям";
             button4.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Location = new Point(47, 26);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(567, 474);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 11;
+            pictureBox1.TabStop = false;
+            // 
+            // button5
+            // 
+            button5.Font = new Font("Script MT Bold", 18F, FontStyle.Bold);
+            button5.ForeColor = Color.DarkSlateBlue;
+            button5.Location = new Point(770, 493);
+            button5.Name = "button5";
+            button5.Size = new Size(380, 49);
+            button5.TabIndex = 12;
+            button5.Text = "Изменить мем";
+            button5.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -170,7 +193,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(1243, 701);
+            ClientSize = new Size(1243, 793);
+            Controls.Add(button5);
+            Controls.Add(pictureBox1);
             Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(button2);
@@ -186,6 +211,7 @@
             Name = "Form1";
             Text = "База мемов";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -203,5 +229,7 @@
         private Button button2;
         private Button button3;
         private Button button4;
+        private PictureBox pictureBox1;
+        private Button button5;
     }
 }
