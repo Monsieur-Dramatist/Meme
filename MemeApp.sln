@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.11925.187 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemeApp.WinForms", "MemeApp.WinForms\MemeApp.WinForms.csproj", "{B00B6447-9F23-45C6-A6E8-A82FA99A50AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemeApp.Console", "MemeApp.Console\MemeApp.Console.csproj", "{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemeApp.Model", "MemeApp.Model\MemeApp.Model.csproj", "{56D83456-FDAA-4A0E-9E97-F300BB37D53D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuisnessLogic", "BuisnessLogic\BuisnessLogic.csproj", "{77BFA0AD-2D2D-418E-8869-4FD837BCD893}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF3ACF58-A3E9-4F2B-89BD-13B0F1DE5A3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56D83456-FDAA-4A0E-9E97-F300BB37D53D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56D83456-FDAA-4A0E-9E97-F300BB37D53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56D83456-FDAA-4A0E-9E97-F300BB37D53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56D83456-FDAA-4A0E-9E97-F300BB37D53D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77BFA0AD-2D2D-418E-8869-4FD837BCD893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77BFA0AD-2D2D-418E-8869-4FD837BCD893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77BFA0AD-2D2D-418E-8869-4FD837BCD893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77BFA0AD-2D2D-418E-8869-4FD837BCD893}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
