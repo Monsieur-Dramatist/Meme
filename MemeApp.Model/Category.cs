@@ -4,7 +4,15 @@ namespace MemeApp.Model
 {
     public enum Category
     {
-        [Description("НАЗВАНИЕ")]
-        nAZVANIEiNeNGLISH
+        [Description("Университет")]
+        University,
+        [Description("АИС")]
+        AIS,
+        [Description("Преподы")]
+        Teacher,
+        [Description("Жизнь")]
+        Life,
+        [Description("Другое")]
+        Another,
     }
 }
