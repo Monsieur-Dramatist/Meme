@@ -194,7 +194,10 @@ namespace BuisnessLogic
         //Стартовые данные
         void InitializeMemes()
         {
-            AddMeme("Название", "Категория", true, out _);
+            AddMeme("НЕвеселый", "АИС", true, out _);
+            AddMeme("ТЕРПИ", "Университет", true, out _);
+            AddMeme("Чиловый парень", "Жизнь", true, out _);
+            AddMeme("Синий чебупель", "Преподы", true, out _);
         }
     }
 }

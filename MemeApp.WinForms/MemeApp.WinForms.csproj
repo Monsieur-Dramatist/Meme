@@ -28,6 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BuisnessLogic\BuisnessLogic.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Images\НЕвеселый.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
