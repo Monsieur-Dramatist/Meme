@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BuisnessLogic\BuisnessLogic.csproj" />
-    <ProjectReference Include="..\MemeApp.WinForms\MemeApp.WinForms.csproj" />
   </ItemGroup>
 
 </Project>

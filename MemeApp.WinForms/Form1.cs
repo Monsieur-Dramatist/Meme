@@ -10,6 +10,7 @@ namespace MemeApp.WinForms
     public partial class Form1 : Form
     {
         private Logic logic = new Logic();
+        private string? currentSelectedCategory = null;
 
         public Form1()
         {
@@ -85,12 +86,18 @@ namespace MemeApp.WinForms
             {
                 var selectedMeme = (MemeDto)dataGridView1.SelectedRows[0].DataBoundItem;
 
+                string oldName = selectedMeme.Name;
                 string newName = txtTitle.Text;
                 string newCategory = txtCategory.Text;
                 bool newIsActual = chkActual.Checked;
 
                 if (logic.UpdateMeme(selectedMeme.Id, newName, newCategory, newIsActual, out string error))
                 {
+                    if (!string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        RenameMemeImage(oldName, newName);
+                    }
+
                     UpdateGrid();
                     txtTitle.Clear();
                     txtCategory.SelectedIndex = -1;
@@ -105,6 +112,28 @@ namespace MemeApp.WinForms
             {
                 MessageBox.Show("Сначала выберите мем из таблицы, который хотите изменить!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void RenameMemeImage(string oldName, string newName)
+        {
+            try
+            {
+                string imagesFolder = System.IO.Path.Combine(Application.StartupPath, "Images");
+                string oldPath = System.IO.Path.Combine(imagesFolder, $"{oldName}.jpg");
+                string newPath = System.IO.Path.Combine(imagesFolder, $"{newName}.jpg");
+
+                if (System.IO.File.Exists(oldPath))
+                {
+                    ClearPictureBox();
+
+                    System.IO.File.Move(oldPath, newPath, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось переименовать файл картинки: {ex.Message}", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        
         }
 
         private bool showingOnlyActual = false;
@@ -127,14 +156,25 @@ namespace MemeApp.WinForms
         {
             string selectedCategory = txtCategory.Text;
 
-            if (!string.IsNullOrWhiteSpace(selectedCategory))
+            if (string.IsNullOrWhiteSpace(selectedCategory))
             {
-                UpdateGrid(logic.GetMemesByCategory(selectedCategory));
+                currentSelectedCategory = null;
+                UpdateGrid();
+                return;
+            }
+
+            if (currentSelectedCategory == selectedCategory)
+            {
+                currentSelectedCategory = null;
+                txtCategory.SelectedIndex = -1;
+                UpdateGrid();
             }
             else
             {
-                UpdateGrid();
+                currentSelectedCategory = selectedCategory;
+                UpdateGrid(logic.GetMemesByCategory(selectedCategory));
             }
+        
         }
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
@@ -153,15 +193,84 @@ namespace MemeApp.WinForms
 
                     if (System.IO.File.Exists(imagePath))
                     {
-                        pictureBox1.ImageLocation = imagePath;
+                        LoadMemeImage(imagePath);
                     }
                     else
                     {
-                        pictureBox1.Image = null;
+                        ClearPictureBox();
                     }
                 }
             }
         }
 
+        private void LoadMemeImage(string path)
+        {
+            ClearPictureBox();
+
+            using (var stream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            {
+                pictureBox1.Image = Image.FromStream(stream);
+            }
+        }
+
+        private void ClearPictureBox()
+        {
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image.Dispose();
+                pictureBox1.Image = null;
+            }
+        }
+
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Сначала выберите мем из таблицы, к которому хотите прикрепить картинку!",
+                                "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var selectedMeme = (MemeDto)dataGridView1.SelectedRows[0].DataBoundItem;
+
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Изображения (*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png";
+                openFileDialog.Title = "Выберите изображение для мема";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        string imagesFolder = System.IO.Path.Combine(Application.StartupPath, "Images");
+
+                        if (!System.IO.Directory.Exists(imagesFolder))
+                        {
+                            System.IO.Directory.CreateDirectory(imagesFolder);
+                        }
+
+                        string destinationPath = System.IO.Path.Combine(imagesFolder, $"{selectedMeme.Name}.jpg");
+
+                        if (pictureBox1.Image != null)
+                        {
+                            pictureBox1.Image.Dispose();
+                            pictureBox1.Image = null;
+                        }
+
+                        System.IO.File.Copy(openFileDialog.FileName, destinationPath, true);
+
+                        LoadMemeImage(destinationPath);
+
+                        MessageBox.Show("Картинка успешно сохранена!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при сохранении картинки: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
     }
-}
+    }
+
