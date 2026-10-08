@@ -1,22 +1,31 @@
-﻿using MemeApp.BusinessLogic;
+﻿using BuisnessLogic;
 using System;
 using System.Collections.Generic;
 
-namespace MemeApp.Console
+namespace MemeApp.Cons
 {
     internal class Program
     {
-        static Logic _logic = new Logic();
+        static Logic logic = new Logic();
 
         static string ShowMainMenu()
         {
             string mainMenuText = "Главное меню:" +
-                    "\n1. Добавить новый мем" +
+                    "\n1. Добавить новый мем" + 
                     "\n2. Удалить мем" +
-                    "\n3. Вывести список всех мемов в виде таблицы" +
-                    "\n4. Вывести гистограмму распределения мемов по категориям" +
-                    "\n5. Выход";
+                    "\n3. Изменить мем" +
+                    "\n4. Вывести список актуальных мемов" +
+                    "\n5. Вывести список всех мемов в виде таблицы" + 
+                    "\n6. Вывести список всех мемов по категориям" + 
+                    "\n7. Выход";
             return mainMenuText;
+        }
+
+        static void Stop()
+        {
+            Console.WriteLine("Нажмите Enter для продолжения");
+            Console.ReadLine();
+            Console.Clear();
         }
 
         static int ReadMenuChoice(int min, int max, string text = "Введите номер пункта: ")
@@ -65,7 +74,7 @@ namespace MemeApp.Console
 
         static string AskCategory()
         {
-            var categories = _logic.GetCategoryNames();
+            var categories = logic.GetCategoryNames();
 
             Console.WriteLine("Выберите категорию:");
             for (int i = 0; i < categories.Count; i++)
@@ -82,7 +91,7 @@ namespace MemeApp.Console
             {
                 Console.WriteLine(ShowMainMenu());
                 int mainMenuUserChoice = ReadMenuChoice(1, 7);
-
+                Console.Clear();
                 switch (mainMenuUserChoice)
                 {
                     case 1:
@@ -92,7 +101,7 @@ namespace MemeApp.Console
                         string categoryForAdd = AskCategory();
                         bool isActualForAdd = ReadBool("Мем актуален?");
 
-                        if (_logic.AddMeme(name, categoryForAdd, isActualForAdd, out string errorInAdd))
+                        if (logic.AddMeme(name, categoryForAdd, isActualForAdd, out string errorInAdd))
                         {
                             Console.WriteLine("Мем успешно добавлен");
                         }
@@ -101,11 +110,10 @@ namespace MemeApp.Console
                             Console.WriteLine($"Ошибка: {errorInAdd}");
                         }
                         break;
-
                     case 2:
                         Console.WriteLine("Удаление мема");
                         Console.WriteLine("\nВсе мемы:");
-                        Console.WriteLine(_logic.FormatMemesTable());
+                        Console.WriteLine(logic.FormatMemesTable());
 
                         int deleteMenuChoice = ReadInt("Введите id мема для его удаления или 0, чтобы выйти в меню: ");
                         if (deleteMenuChoice == 0)
@@ -113,24 +121,69 @@ namespace MemeApp.Console
                             Console.WriteLine("Вы выбрали выйти в главное меню");
                             break;
                         }
-                        if (_logic.DeleteMeme(deleteMenuChoice, out string error))
+                        if (logic.DeleteMeme(deleteMenuChoice, out string errorInDelete))
                         {
                             Console.WriteLine("Мем успешно удалён");
                         }
                         else
                         {
-                            Console.WriteLine($"Ошибка: {error}");
+                            Console.WriteLine($"Ошибка: {errorInDelete}");
                         }
                         break;
 
                     case 3:
-                        Console.WriteLine("Список всех мемов");
-                        Console.WriteLine(_logic.FormatMemesTable());
+                        Console.WriteLine("Изменение мема");
+                        Console.WriteLine("\nВсе мемы:");
+                        Console.WriteLine(logic.FormatMemesTable());
+
+                        int updateId = ReadInt("Введите id мема для его изменения или 0, чтобы выйти в меню:");
+                        if (updateId == 0)
+                        {
+                            Console.WriteLine("Вы выбрали выйти в главное меню");
+                            break;
+                        }
+
+                        Console.WriteLine("Введите новое название:");
+                        string newName = Console.ReadLine().Trim();
+
+                        string newCategory = AskCategory();
+
+                        bool newIsActual = ReadBool("Мем актуален?");
+
+                        if (logic.UpdateMeme(updateId, newName, newCategory, newIsActual, out string errorInIpdate))
+                        {
+                            Console.WriteLine("Мем успешно изменён");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Ошибка: {errorInIpdate}");
+                        }
                         break;
 
                     case 4:
+                        Console.WriteLine("Актуальные мемы:");
+                        var actualMemes = logic.GetMemesByActualStatus(true);
+                        if (actualMemes.Count == 0)
+                        {
+                            Console.WriteLine("Актуальных мемов нет.");
+                        }
+                        else
+                        {
+                            foreach (var m in actualMemes)
+                            {
+                                Console.WriteLine($"{m.Id}. {m.Name} | {m.Category}");
+                            }
+                        }
+                        break;
+
+                    case 5:
+                        Console.WriteLine("Список всех мемов");
+                        Console.WriteLine(logic.FormatMemesTable());
+                        break;
+
+                    case 6:
                         Console.WriteLine("Гистограмма распределения мемов по категориям:");
-                        Dictionary<string, int> gisto = _logic.GetCategoryDistribution();
+                        Dictionary<string, int> gisto = logic.GetCategoryDistribution();
                         if (gisto.Count == 0)
                         {
                             Console.WriteLine("Нет мемов");
@@ -141,11 +194,12 @@ namespace MemeApp.Console
                         }
                         break;
 
-                    case 5:
+                    case 7:
                         Console.WriteLine("До новых встреч!");
                         isMenuActive = false;
                         break;
                 }
+                Stop();
             }
         }
     }

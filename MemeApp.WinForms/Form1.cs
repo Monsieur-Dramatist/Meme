@@ -39,7 +39,7 @@ namespace MemeApp.WinForms
             dataGridView1.Refresh();
         }
 
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
             string name = txtTitle.Text;
