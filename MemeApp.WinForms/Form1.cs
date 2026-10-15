@@ -12,6 +12,10 @@ namespace MemeApp.WinForms
         private Logic logic = new Logic();
         private string? currentSelectedCategory = null;
 
+        /// <summary>
+        /// Конструктор формы. Настраивает таблицу, загружает категории
+        /// и показывает все мемы при открытии программы.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -40,7 +44,12 @@ namespace MemeApp.WinForms
             dataGridView1.Refresh();
         }
 
-
+        /// <summary>
+        ///  Обработчик кнопки «Добавить». Берёт данные из полей и добавляет новый мем.
+        /// Если всё хорошо — обновляет таблицу, если нет — показывает ошибку.
+        /// </summary>
+        /// <param name="sender">Кнопка, которая была нажата</param>
+        /// <param name="e">Параметры события</param>
         private void button1_Click(object sender, EventArgs e)
         {
             string name = txtTitle.Text;
@@ -59,6 +68,12 @@ namespace MemeApp.WinForms
             }
         }
 
+        /// <summary>
+        /// Обработчик кнопки «Удалить». Удаляет мем, выбранный в таблице.
+        /// Если ничего не выбрано — просит выбрать.
+        /// </summary>
+        /// <param name="sender">Кнопка, которая была нажата</param>
+        /// <param name="e">Параметры события</param>
         private void button2_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count > 0)
@@ -80,6 +95,12 @@ namespace MemeApp.WinForms
             }
         }
 
+        /// <summary>
+        /// Обработчик кнопки «Изменить». Меняет данные выбранного мема на то,
+        /// что написано в полях. Если название поменялось — переименовывает картинку.
+        /// </summary>
+        /// <param name="sender">Кнопка, которая была нажата.</param>
+        /// <param name="e">Параметры события.</param>
         private void button5_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count > 0)
@@ -114,6 +135,12 @@ namespace MemeApp.WinForms
             }
         }
 
+        /// <summary>
+        /// Переименовывает файл картинки мема в папке Images,
+        /// когда меняется название мема.
+        /// </summary>
+        /// <param name="oldName">Старое название мема.</param>
+        /// <param name="newName">Новое название мема.</param>
         private void RenameMemeImage(string oldName, string newName)
         {
             try
@@ -138,6 +165,12 @@ namespace MemeApp.WinForms
 
         private bool showingOnlyActual = false;
 
+        /// <summary>
+        /// Обработчик кнопки фильтра по актуальности.
+        /// Переключает показ: только актуальные мемы или все подряд.
+        /// </summary>
+        /// <param name="sender">Кнопка, которая была нажата.</param>
+        /// <param name="e">Параметры события.</param>
         private void button3_Click(object sender, EventArgs e)
         {
             if (!showingOnlyActual)
@@ -152,6 +185,12 @@ namespace MemeApp.WinForms
             }
         }
 
+        /// <summary>
+        /// Обработчик кнопки фильтра по категории.
+        /// Показывает мемы выбранной категории, а при повторном нажатии — сбрасывает фильтр.
+        /// </summary>
+        /// <param name="sender">Кнопка, которая была нажата.</param>
+        /// <param name="e">Параметры события.</param>
         private void button4_Click(object sender, EventArgs e)
         {
             string selectedCategory = txtCategory.Text;
@@ -177,6 +216,12 @@ namespace MemeApp.WinForms
         
         }
 
+        /// <summary>
+        /// Срабатывает при выборе строки в таблице. Заполняет поля данными мема
+        /// и загружает его картинку.
+        /// </summary>
+        /// <param name="sender">Таблица, в которой выбрали строку.</param>
+        /// <param name="e">Параметры события.</param>
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count > 0)
@@ -203,6 +248,10 @@ namespace MemeApp.WinForms
             }
         }
 
+        /// <summary>
+        /// Загружает картинку из файла в pictureBox.
+        /// </summary>
+        /// <param name="path">Путь к файлу картинки.</param>
         private void LoadMemeImage(string path)
         {
             ClearPictureBox();
@@ -213,6 +262,9 @@ namespace MemeApp.WinForms
             }
         }
 
+        /// <summary>
+        /// Очищает pictureBox и убирает старую картинку из памяти.
+        /// </summary>
         private void ClearPictureBox()
         {
             if (pictureBox1.Image != null)
@@ -222,7 +274,12 @@ namespace MemeApp.WinForms
             }
         }
 
-
+        /// <summary>
+        /// Срабатывает при клике по картинке. Открывает выбор файла
+        /// и сохраняет выбранную картинку для текущего мема.
+        /// </summary>
+        /// <param name="sender">Картинка, по которой кликнули.</param>
+        /// <param name="e">Параметры события.</param>
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count == 0)
