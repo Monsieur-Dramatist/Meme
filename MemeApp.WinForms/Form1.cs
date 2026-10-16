@@ -22,21 +22,16 @@ namespace MemeApp.WinForms
 
             dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
 
-            UpdateGrid();
+            RefreshGrid();
         }
 
-        private void UpdateGrid(object data = null)
+        private void RefreshGrid()
         {
             dataGridView1.DataSource = null;
-            if (data != null)
-            {
-                dataGridView1.DataSource = data;
-            }
-            else
-            {
-                dataGridView1.DataSource = logic.GetAllMemes();
-            }
-
+            dataGridView1.DataSource = logic.GetMemes(
+                onlyActual: showingOnlyActual ? true : (bool?)null,
+                category: currentSelectedCategory
+            );
             dataGridView1.Refresh();
         }
 
@@ -49,7 +44,7 @@ namespace MemeApp.WinForms
 
             if (logic.AddMeme(name, category, isActual, out string error))
             {
-                UpdateGrid();
+                RefreshGrid();
                 txtTitle.Clear();
                 chkActual.Checked = false;
             }
@@ -67,7 +62,7 @@ namespace MemeApp.WinForms
 
                 if (logic.DeleteMeme(selectedMeme.Id, out string error))
                 {
-                    UpdateGrid();
+                    RefreshGrid();
                 }
                 else
                 {
@@ -98,7 +93,7 @@ namespace MemeApp.WinForms
                         RenameMemeImage(oldName, newName);
                     }
 
-                    UpdateGrid();
+                    RefreshGrid();
                     txtTitle.Clear();
                     txtCategory.SelectedIndex = -1;
                     chkActual.Checked = false;
@@ -140,16 +135,8 @@ namespace MemeApp.WinForms
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (!showingOnlyActual)
-            {
-                UpdateGrid(logic.GetMemesByActualStatus(true));
-                showingOnlyActual = true;
-            }
-            else
-            {
-                UpdateGrid(logic.GetAllMemes());
-                showingOnlyActual = false;
-            }
+            showingOnlyActual = !showingOnlyActual;
+            RefreshGrid();
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -159,22 +146,19 @@ namespace MemeApp.WinForms
             if (string.IsNullOrWhiteSpace(selectedCategory))
             {
                 currentSelectedCategory = null;
-                UpdateGrid();
-                return;
             }
-
-            if (currentSelectedCategory == selectedCategory)
+            else if (currentSelectedCategory == selectedCategory)
             {
                 currentSelectedCategory = null;
                 txtCategory.SelectedIndex = -1;
-                UpdateGrid();
             }
             else
             {
                 currentSelectedCategory = selectedCategory;
-                UpdateGrid(logic.GetMemesByCategory(selectedCategory));
             }
-        
+
+            RefreshGrid();
+
         }
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)

@@ -47,34 +47,6 @@ namespace BuisnessLogic
             return true;
         }
 
-        public List<MemeDto> GetAllMemes() //прочесть всё
-        {
-            return memes.Select(m => new MemeDto
-            {
-                Id = m.Id,
-                Name = m.Name,
-                Category = EnumHelper.GetDescription(m.Category),
-                IsActual = m.IsActual
-            }).ToList();
-        }
-
-        public List<MemeDto> GetMemesByCategory(string categoryName) //по категориям
-        {
-            bool found = EnumHelper.TryParseByDescription<Category>(categoryName, out var category);
-            if (!found) return new List<MemeDto>();
-
-            return memes
-                .Where(m => m.Category == category)
-                .Select(m => new MemeDto
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    Category = EnumHelper.GetDescription(m.Category),
-                    IsActual = m.IsActual
-                })
-                .ToList();
-        }
-
         public bool UpdateMeme(int id, string newName, string newCategory, bool newIsActual, out string error) //Обновление
         {
             error = null;
@@ -120,27 +92,18 @@ namespace BuisnessLogic
             return true;
         }
 
+        public List<MemeDto> GetAllMemes() => GetMemes();
+
+        public List<MemeDto> GetMemesByCategory(string categoryName) => GetMemes(category: categoryName);
+
+        public List<MemeDto> GetMemesByActualStatus(bool isActual) => GetMemes(onlyActual: isActual);
+
         //Бизнес функция 1: распределение по категориям
         public Dictionary<string, int> GetCategoryDistribution()
         {
             return memes
                 .GroupBy(m => m.Category)
                 .ToDictionary(g => EnumHelper.GetDescription(g.Key), g => g.Count());
-        }
-
-        //Бф 2: только актуальные или нет
-        public List<MemeDto> GetMemesByActualStatus(bool isActual)
-        {
-            return memes
-                .Where(m => m.IsActual == isActual)
-                .Select(m => new MemeDto
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    Category = EnumHelper.GetDescription(m.Category),
-                    IsActual = m.IsActual
-                })
-                .ToList();
         }
 
         //для ComboBox
@@ -189,6 +152,32 @@ namespace BuisnessLogic
             }
 
             return sb.ToString().TrimEnd();
+        }
+
+        //...
+
+        // Единый метод для получения мемов с фильтрами.
+        // Форма и консоль должны звать ТОЛЬКО его.
+        public List<MemeDto> GetMemes(bool? onlyActual = null, string category = null)
+        {
+            IEnumerable<Meme> query = memes;
+
+            if (onlyActual == true)
+                query = query.Where(m => m.IsActual);
+
+            if (!string.IsNullOrWhiteSpace(category) &&
+                EnumHelper.TryParseByDescription<Category>(category, out var cat))
+            {
+                query = query.Where(m => m.Category == cat);
+            }
+
+            return query.Select(m => new MemeDto
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Category = EnumHelper.GetDescription(m.Category),
+                IsActual = m.IsActual
+            }).ToList();
         }
 
         //Стартовые данные

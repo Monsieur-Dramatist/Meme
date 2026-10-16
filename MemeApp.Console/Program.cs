@@ -162,7 +162,7 @@ namespace MemeApp.Cons
 
                     case 4:
                         Console.WriteLine("Актуальные мемы:");
-                        var actualMemes = logic.GetMemesByActualStatus(true);
+                        var actualMemes = logic.GetMemes(onlyActual: true);
                         if (actualMemes.Count == 0)
                         {
                             Console.WriteLine("Актуальных мемов нет.");
