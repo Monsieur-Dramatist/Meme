@@ -1,6 +1,6 @@
 ﻿namespace MemeApp.Model
 {
-    public class Meme
+    public class Meme: IDomainObject
     {
         public int Id { get; set; }
         public string Name { get; set; }
