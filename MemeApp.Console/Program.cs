@@ -6,8 +6,12 @@ namespace MemeApp.Cons
 {
     internal class Program
     {
+        /// <summary>Общий экземпляр бизнес-логики.</summary>
         static Logic logic = new Logic();
 
+        /// <summary>
+        /// Возвращает текст главного меню для вывода в консоль.
+        /// </summary>
         static string ShowMainMenu()
         {
             string mainMenuText = "Главное меню:" +
@@ -21,6 +25,7 @@ namespace MemeApp.Cons
             return mainMenuText;
         }
 
+        /// <summary>Ждёт нажатия Enter и очищает консоль.</summary>
         static void Stop()
         {
             Console.WriteLine("Нажмите Enter для продолжения");
@@ -28,6 +33,10 @@ namespace MemeApp.Cons
             Console.Clear();
         }
 
+        /// <summary>
+        /// Считывает номер пункта меню в диапазоне [min, max].
+        /// Повторяет ввод, пока не будет получено корректное число.
+        /// </summary>
         static int ReadMenuChoice(int min, int max, string text = "Введите номер пункта: ")
         {
             while (true)
@@ -44,6 +53,9 @@ namespace MemeApp.Cons
             }
         }
 
+        /// <summary>
+        /// Считывает целое число. Повторяет запрос при ошибке ввода.
+        /// </summary>
         static int ReadInt(string text)
         {
             while (true)
@@ -58,6 +70,9 @@ namespace MemeApp.Cons
             }
         }
 
+        /// <summary>
+        /// Считывает булево значение: 1 — да, 0 — нет.
+        /// </summary>
         static bool ReadBool(string text)
         {
             while (true)
@@ -72,6 +87,10 @@ namespace MemeApp.Cons
             }
         }
 
+        /// <summary>
+        /// Предлагает пользователю выбрать категорию из списка,
+        /// полученного через <see cref="Logic.GetCategoryNames"/>.
+        /// </summary>
         static string AskCategory()
         {
             var categories = logic.GetCategoryNames();
@@ -84,6 +103,11 @@ namespace MemeApp.Cons
             return categories[index];
         }
 
+        /// <summary>
+        /// Точка входа. Реализует меню из 7 пунктов.
+        /// Для каждой операции вызывает соответствующий метод
+        /// <see cref="Logic"/> и выводит результат.
+        /// </summary>
         static void Main(string[] args)
         {
             bool isMenuActive = true;
