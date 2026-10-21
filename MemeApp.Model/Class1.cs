@@ -1,11 +1,6 @@
 ﻿namespace MemeApp.Model
 {
-    /// <summary>
-    /// Модель мема. Используется внутри класса <c>Logic</c>
-    /// и наружу не отдаётся. Категория представлена перечислением
-    /// <see cref="Category"/>, а не строкой.
-    /// </summary>
-    public class Meme
+    public class Meme: IDomainObject
     {
         public int Id { get; set; }
         public string Name { get; set; }
