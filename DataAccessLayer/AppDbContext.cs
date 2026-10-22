@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer
 {
-    internal class AppDbContext:DbContext
+    public class AppDbContext:DbContext
     {
         public DbSet<Meme> Memes { get; set; }
         

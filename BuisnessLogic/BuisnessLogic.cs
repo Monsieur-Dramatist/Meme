@@ -1,5 +1,12 @@
-﻿using MemeApp.Model;
+﻿using DataAccessLayer;
+using MemeApp.Model;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+
+
 
 namespace BuisnessLogic
 {
@@ -12,17 +19,17 @@ namespace BuisnessLogic
     /// </summary>
     public class Logic
     {
-        private readonly List<Meme> memes;
-        private int nextID = 1;
+        private readonly IRepository<Meme> repository;
 
         /// <summary>
-        /// Конструктор. Создаёт пустой список и заполняет его
-        /// стартовыми демонстрационными мемами.
+        /// Подключается к бд
         /// </summary>
         public Logic()
         {
-            memes = new List<Meme>();
-            InitializeMemes();
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Admin\source\repos\Monsieur-Dramatist\Meme\DataAccessLayer\MemeDatabase.mdf;Integrated Security=True");
+            var context = new AppDbContext(optionsBuilder.Options);
+            repository = new EntityRepository<Meme>(context);
         }
 
         /// <summary>
@@ -56,15 +63,23 @@ namespace BuisnessLogic
                 return false;
             }
 
-            memes.Add(new Meme
+            Meme newMeme = new Meme
             {
-                Id = nextID++,
                 Name = name.Trim(),
                 Category = enumCategory,
                 IsActual = isActual
-            });
+            };
 
-            return true;
+            try
+            {
+                repository.Add(newMeme);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = $"Ошибка БД: {ex.Message}";
+                return false;
+            }
         }
 
         /// <summary>
@@ -81,7 +96,7 @@ namespace BuisnessLogic
         {
             error = null;
 
-            Meme meme = memes.FirstOrDefault(m => m.Id == id);
+            Meme meme = repository.ReadById(id);
             if (meme == null)
             {
                 error = "Мем не найден";
@@ -103,8 +118,16 @@ namespace BuisnessLogic
             meme.Name = newName.Trim();
             meme.Category = enumCategory;
             meme.IsActual = newIsActual;
-
-            return true;
+            try
+            {
+                repository.Update(meme);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = $"Ошибка БД: {ex.Message}";
+                return false;
+            }
         }
 
         /// <summary>
@@ -117,16 +140,21 @@ namespace BuisnessLogic
         {
             error = null;
 
-            Meme meme = memes.FirstOrDefault(m => m.Id == id);
-            if (meme == null)
+            try
             {
-                error = "Мем не найден";
+                repository.Delete(id);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = $"Ошибка БД: {ex.Message}";
                 return false;
             }
-
-            memes.Remove(meme);
-            return true;
         }
+
+
+
+
 
         /// <summary>Возвращает все мемы. Обёртка над <see cref="GetMemes"/>.</summary
         public List<MemeDto> GetAllMemes() => GetMemes();
@@ -145,16 +173,19 @@ namespace BuisnessLogic
         /// <param name="isActual">true — актуальные, false — неактуальные.</param>
         public List<MemeDto> GetMemesByActualStatus(bool isActual) => GetMemes(onlyActual: isActual);
 
+
+
+
+
         //Бизнес функция 1: распределение по категориям
         /// <summary>
-        /// Бизнес-функция: распределение мемов по категориям.
-        /// Возвращает словарь «описание категории → количество мемов».
+        /// Бизнес-функция: распределение мемов по категориям. Возвращает словарь «описание категории → количество мемов».
         /// </summary>
         public Dictionary<string, int> GetCategoryDistribution()
         {
-            return memes
-                .GroupBy(m => m.Category)
-                .ToDictionary(g => EnumHelper.GetDescription(g.Key), g => g.Count());
+            return repository.Readall()
+               .GroupBy(m => m.Category)
+               .ToDictionary(g => EnumHelper.GetDescription(g.Key), g => g.Count());
         }
 
         //для ComboBox
@@ -175,6 +206,7 @@ namespace BuisnessLogic
         /// <returns>Строка с таблицей.</returns>
         public string FormatMemesTable()
         {
+            var memes = repository.Readall().ToList();
             if (memes.Count == 0)
                 return "Список пуст.";
 
@@ -231,7 +263,7 @@ namespace BuisnessLogic
         /// </param>
         public List<MemeDto> GetMemes(bool? onlyActual = null, string category = null)
         {
-            IEnumerable<Meme> query = memes;
+            IEnumerable<Meme> query = repository.Readall();
 
             if (onlyActual == true)
                 query = query.Where(m => m.IsActual);
@@ -256,12 +288,15 @@ namespace BuisnessLogic
         /// Заполняет список стартовыми демонстрационными мемами.
         /// Вызывается один раз из конструктора.
         /// </summary>
-        void InitializeMemes()
+        public void InitializeDatabase()
         {
-            AddMeme("НЕвеселый", "АИС", true, out _);
-            AddMeme("ТЕРПИ", "Университет", true, out _);
-            AddMeme("Чиловый парень", "Жизнь", true, out _);
-            AddMeme("Синий чебупель", "Преподы", true, out _);
+            if (!repository.Readall().Any())
+            {
+                repository.Add(new Meme { Name = "НЕвеселый", Category = Category.AIS, IsActual = true });
+                repository.Add(new Meme { Name = "ТЕРПИ", Category = Category.University, IsActual = true });
+                repository.Add(new Meme { Name = "Чиловый парень", Category = Category.Life, IsActual = true });
+                repository.Add(new Meme { Name = "Синий чебупель", Category = Category.Teacher, IsActual = true });
+            }
         }
     }
 }

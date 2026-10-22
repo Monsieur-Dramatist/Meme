@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    internal class EntityRepository<T> : IRepository<T> where T : class, IDomainObject
+    public class EntityRepository<T> : IRepository<T> where T : class, IDomainObject
     {
         protected readonly AppDbContext _context;
 

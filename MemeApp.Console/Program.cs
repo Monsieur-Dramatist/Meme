@@ -110,6 +110,7 @@ namespace MemeApp.Cons
         /// </summary>
         static void Main(string[] args)
         {
+            logic.InitializeDatabase();
             bool isMenuActive = true;
             while (isMenuActive)
             {
