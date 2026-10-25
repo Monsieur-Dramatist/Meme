@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    public interface IRepository<T> where T : class,IDomainObject
+    public interface IRepository
     {
-        void Add(T entity);
+        void Add(Meme entity);
 
-        IEnumerable<T> Readall();
+        IEnumerable<Meme> Readall();
 
-        T ReadById(int id);
+        Meme ReadById(int id);
 
-        void Update(T entity);
+        void Update(Meme entity);
 
         void Delete(int id);
     }

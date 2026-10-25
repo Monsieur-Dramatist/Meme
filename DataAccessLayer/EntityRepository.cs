@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    public class EntityRepository<T> : IRepository<T> where T : class, IDomainObject
+    public class EntityRepository : IRepository
     {
         protected readonly AppDbContext _context;
 
@@ -26,9 +26,9 @@ namespace DataAccessLayer
         /// Добавляет новую запись в бд
         /// </summary>
         /// <param name="entity">мем, который нужно добавить</param>
-        public void Add(T entity)
+        public void Add(Meme entity)
         {
-            _context.Set<T>().Add(entity);
+            _context.Memes.Add(entity); // Работаем напрямую с DbSet<Meme>
             _context.SaveChanges();
         }
 
@@ -38,10 +38,10 @@ namespace DataAccessLayer
         /// <param name="id">идентефикатор уаляемомого мема</param>
         public void Delete(int id)
         {
-            var entity = _context.Set<T>().Find(id);
+            var entity = _context.Memes.Find(id);
             if (entity != null)
             {
-                _context.Set<T>().Remove(entity);
+                _context.Memes.Remove(entity);
                 _context.SaveChanges();
             }
         }
@@ -50,9 +50,9 @@ namespace DataAccessLayer
         /// Возвращает список всех записей из бд
         /// </summary>
         /// <returns>Список мемов</returns>
-        public IEnumerable<T> Readall()
+        public IEnumerable<Meme> Readall()
         {
-            return _context.Set<T>().ToList();
+            return _context.Memes.ToList();
         }
 
         /// <summary>
@@ -60,18 +60,18 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="id">дентификатор мема</param>
         /// <returns>найденный мем</returns>
-        public T ReadById(int id)
+        public Meme ReadById(int id)
         {
-            return _context.Set<T>().Find(id);
+            return _context.Memes.Find(id);
         }
 
         /// <summary>
         /// Обновляет данные о записи в бд
         /// </summary>
         /// <param name="entity">обновлённый мем</param>
-        public void Update(T entity)
+        public void Update(Meme entity)
         {
-            _context.Set<T>().Update(entity);
+            _context.Memes.Update(entity);
             _context.SaveChanges();
         }
     }

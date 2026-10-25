@@ -10,11 +10,12 @@ using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace DataAccessLayer
 {
-    public class DapperRepository<T> : IRepository<T> where T : class, IDomainObject
+    public class DapperRepository : IRepository
     {
         private readonly IDbConnection _connection;
 
-        private string TableName => typeof(T).Name + "s"; //имя таблицы определяется
+        private string TableName => "Memes";
+        //private string TableName => typeof(T).Name + "s"; - имя таблицы определяется
 
         /// <summary>
         /// Принимает подключение к базе данных, через которое будут выполняться SQL-запросы
@@ -29,8 +30,9 @@ namespace DataAccessLayer
         /// Добавляет новую запись в таблицу Memes
         /// </summary>
         /// <param name="entity">мем, который нужно сохранить</param>
-        public void Add(T entity)
+        public void Add(Meme entity)
         {
+            // Прописываем конкретные поля мема
             string sql = $"INSERT INTO {TableName} (Name, Category, IsActual) VALUES (@Name, @Category, @IsActual)";
             _connection.Execute(sql, entity);
         }
@@ -49,10 +51,10 @@ namespace DataAccessLayer
         /// Возвращает список всех записей из таблицы Memes.
         /// </summary>
         /// <returns>список всех мемов</returns>
-        public IEnumerable<T> Readall()
+        public IEnumerable<Meme> Readall()
         {
             string sql = $"SELECT * FROM {TableName}";
-            return _connection.Query<T>(sql);
+            return _connection.Query<Meme>(sql); // Возвращаем конкретный тип Meme
         }
 
         /// <summary>
@@ -60,25 +62,19 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="id">Идентификатор мема</param>
         /// <returns>найденный мем или null</returns>
-        public T ReadById(int id)
+        public Meme ReadById(int id)
         {
             string sql = $"SELECT * FROM {TableName} WHERE Id = @Id";
-            return _connection.QueryFirstOrDefault<T>(sql, new { Id = id });
+            return _connection.QueryFirstOrDefault<Meme>(sql, new { Id = id });
         }
 
         /// <summary>
         /// Обновляет данные существующей записи в таблице Memes
         /// </summary>
         /// <param name="entity">обновлённый мем</param>
-        public void Update(T entity)
+        public void Update(Meme entity)
         {
-            var properties = typeof(T).GetProperties()
-                .Where(p => p.Name != "Id")
-                .Select(p => $"{p.Name} = @{p.Name}");
-
-            string set = string.Join(", ", properties);
-            string sql = $"UPDATE {TableName} SET {set} WHERE Id = @Id";
-
+            string sql = $"UPDATE {TableName} SET Name = @Name, Category = @Category, IsActual = @IsActual WHERE Id = @Id";
             _connection.Execute(sql, entity);
         }
     }

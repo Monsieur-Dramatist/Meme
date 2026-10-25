@@ -19,7 +19,7 @@ namespace BuisnessLogic
     /// </summary>
     public class Logic
     {
-        private readonly IRepository<Meme> repository;
+        private readonly IRepository repository;
 
         /// <summary>
         /// Подключается к бд
@@ -29,7 +29,9 @@ namespace BuisnessLogic
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Admin\source\repos\Monsieur-Dramatist\Meme\DataAccessLayer\MemeDatabase.mdf;Integrated Security=True");
             var context = new AppDbContext(optionsBuilder.Options);
-            repository = new EntityRepository<Meme>(context);
+            repository = new EntityRepository(context);
+            //var connection = new Microsoft.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Admin\source\repos\Monsieur-Dramatist\Meme\DataAccessLayer\MemeDatabase.mdf;Integrated Security=True");
+            //repository = new DapperRepository<Meme>(connection);
         }
 
         /// <summary>
@@ -152,10 +154,6 @@ namespace BuisnessLogic
             }
         }
 
-
-
-
-
         /// <summary>Возвращает все мемы. Обёртка над <see cref="GetMemes"/>.</summary
         public List<MemeDto> GetAllMemes() => GetMemes();
 
@@ -172,9 +170,6 @@ namespace BuisnessLogic
         /// </summary>
         /// <param name="isActual">true — актуальные, false — неактуальные.</param>
         public List<MemeDto> GetMemesByActualStatus(bool isActual) => GetMemes(onlyActual: isActual);
-
-
-
 
 
         //Бизнес функция 1: распределение по категориям
@@ -285,7 +280,7 @@ namespace BuisnessLogic
 
         //Стартовые данные
         /// <summary>
-        /// Заполняет список стартовыми демонстрационными мемами.
+        /// Заполняет бд стартовыми демонстрационными мемами.
         /// Вызывается один раз из конструктора.
         /// </summary>
         public void InitializeDatabase()
