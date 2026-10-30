@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer
 {
-    public class EntityRepository : IRepository
+    public class EntityRepository : IRepository<Meme>
     {
         protected readonly AppDbContext _context;
 

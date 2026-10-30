@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace DataAccessLayer
 {
-    public class DapperRepository : IRepository
+    public class DapperRepository : IRepository<Meme>
     {
         private readonly IDbConnection _connection;
 

@@ -19,7 +19,7 @@ namespace BuisnessLogic
     /// </summary>
     public class Logic
     {
-        private readonly IRepository repository;
+        private readonly IRepository<Meme> repository;
 
         /// <summary>
         /// Подключается к бд
