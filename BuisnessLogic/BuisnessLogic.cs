@@ -20,18 +20,10 @@ namespace BuisnessLogic
     public class Logic
     {
         private readonly IRepository repository;
-
-        /// <summary>
-        /// Подключается к бд
-        /// </summary>
-        public Logic()
+        public Logic(IRepository repository)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Admin\source\repos\Monsieur-Dramatist\Meme\DataAccessLayer\MemeDatabase.mdf;Integrated Security=True");
-            var context = new AppDbContext(optionsBuilder.Options);
-            repository = new EntityRepository(context);
-            //var connection = new Microsoft.Data.SqlClient.SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Admin\source\repos\Monsieur-Dramatist\Meme\DataAccessLayer\MemeDatabase.mdf;Integrated Security=True");
-            //repository = new DapperRepository<Meme>(connection);
+            this.repository = repository;
+            InitializeDatabase();
         }
 
         /// <summary>
@@ -193,53 +185,6 @@ namespace BuisnessLogic
             return EnumHelper.GetDescriptions<Category>();
         }
 
-        //Текстовая таблица для консоли
-        /// <summary>
-        /// Бизнес-функция: формирует текстовую таблицу всех мемов
-        /// для вывода в консоль.
-        /// </summary>
-        /// <returns>Строка с таблицей.</returns>
-        public string FormatMemesTable()
-        {
-            var memes = repository.Readall().ToList();
-            if (memes.Count == 0)
-                return "Список пуст.";
-
-            var rows = memes.Select(m => new
-            {
-                Id = m.Id.ToString(),
-                Name = m.Name,
-                Category = EnumHelper.GetDescription(m.Category),
-                IsActual = m.IsActual ? "Да" : "Нет"
-            }).ToList();
-
-            int idWidth = Math.Max("ID".Length, rows.Max(r => r.Id.Length)) + 2;
-            int nameWidth = Math.Max("Название".Length, rows.Max(r => r.Name.Length)) + 2;
-            int catWidth = Math.Max("Категория".Length, rows.Max(r => r.Category.Length)) + 2;
-            int actWidth = Math.Max("Актуальность".Length, rows.Max(r => r.IsActual.Length)) + 2;
-
-            var sb = new StringBuilder();
-
-            sb.AppendLine(
-                "ID".PadRight(idWidth) + " | " +
-                "Название".PadRight(nameWidth) + " | " +
-                "Категория".PadRight(catWidth) + " | " +
-                "Актуальность".PadRight(actWidth));
-
-            int lineWidth = idWidth + nameWidth + catWidth + actWidth + 3 * 3;
-            sb.AppendLine(new string('-', lineWidth));
-
-            foreach (var r in rows)
-            {
-                sb.AppendLine(
-                    r.Id.PadRight(idWidth) + " | " +
-                    r.Name.PadRight(nameWidth) + " | " +
-                    r.Category.PadRight(catWidth) + " | " +
-                    r.IsActual.PadRight(actWidth));
-            }
-
-            return sb.ToString().TrimEnd();
-        }
 
         /// <summary>
         /// Единый метод чтения мемов с необязательными фильтрами.

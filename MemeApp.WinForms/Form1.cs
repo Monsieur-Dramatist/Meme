@@ -4,13 +4,17 @@ using System.Linq;
 using System.Windows.Forms;
 using BuisnessLogic;
 using MemeApp.Model;
+using Ninject;
+using DataAccessLayer;
 
 namespace MemeApp.WinForms
 {
     public partial class Form1 : Form
     {
-        private Logic logic = new Logic();
+        private IKernel ninjectKernel;
         private string? currentSelectedCategory = null;
+        private Logic bL;
+        private bool showingOnlyActual = false;
 
         /// <summary>
         /// Конструктор формы. Настраивает таблицу, загружает категории
@@ -20,9 +24,12 @@ namespace MemeApp.WinForms
         {
             InitializeComponent();
 
+            ninjectKernel = new StandardKernel(new SimpleConfigModule());
+            bL = ninjectKernel.Get<Logic>();
+
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            txtCategory.DataSource = logic.GetCategoryNames();
+            txtCategory.DataSource = bL.GetCategoryNames();
 
             dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
 
@@ -32,7 +39,7 @@ namespace MemeApp.WinForms
         private void RefreshGrid()
         {
             dataGridView1.DataSource = null;
-            dataGridView1.DataSource = logic.GetMemes(
+            dataGridView1.DataSource = bL.GetMemes(
                 onlyActual: showingOnlyActual ? true : (bool?)null,
                 category: currentSelectedCategory
             );
@@ -51,7 +58,7 @@ namespace MemeApp.WinForms
             string category = txtCategory.Text;
             bool isActual = chkActual.Checked;
 
-            if (logic.AddMeme(name, category, isActual, out string error))
+            if (bL.AddMeme(name, category, isActual, out string error))
             {
                 RefreshGrid();
                 txtTitle.Clear();
@@ -75,7 +82,7 @@ namespace MemeApp.WinForms
             {
                 var selectedMeme = (MemeDto)dataGridView1.SelectedRows[0].DataBoundItem;
 
-                if (logic.DeleteMeme(selectedMeme.Id, out string error))
+                if (bL.DeleteMeme(selectedMeme.Id, out string error))
                 {
                     RefreshGrid();
                 }
@@ -107,7 +114,7 @@ namespace MemeApp.WinForms
                 string newCategory = txtCategory.Text;
                 bool newIsActual = chkActual.Checked;
 
-                if (logic.UpdateMeme(selectedMeme.Id, newName, newCategory, newIsActual, out string error))
+                if (bL.UpdateMeme(selectedMeme.Id, newName, newCategory, newIsActual, out string error))
                 {
                     if (!string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -158,7 +165,6 @@ namespace MemeApp.WinForms
         
         }
 
-        private bool showingOnlyActual = false;
 
         /// <summary>
         /// Обработчик кнопки фильтра по актуальности.

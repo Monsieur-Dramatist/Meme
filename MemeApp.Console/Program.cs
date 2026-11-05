@@ -1,13 +1,15 @@
 ﻿using BuisnessLogic;
+using DataAccessLayer;
+using Ninject;
 using System;
 using System.Collections.Generic;
 
-namespace MemeApp.Cons
+namespace MemeApp.ConsoleApp
 {
     internal class Program
     {
         /// <summary>Общий экземпляр бизнес-логики.</summary>
-        static Logic logic = new Logic();
+        static Logic logic;
 
         /// <summary>
         /// Возвращает текст главного меню для вывода в консоль.
@@ -110,13 +112,20 @@ namespace MemeApp.Cons
         /// </summary>
         static void Main(string[] args)
         {
+            // 1. Создаем ядро Ninject и получаем наш единственный экземпляр логики
+            IKernel ninjectKernel = new StandardKernel(new SimpleConfigModule());
+            logic = ninjectKernel.Get<Logic>();
+
+            // Теперь вызываем метод у инициализированной переменной
             logic.InitializeDatabase();
             bool isMenuActive = true;
+
             while (isMenuActive)
             {
                 Console.WriteLine(ShowMainMenu());
                 int mainMenuUserChoice = ReadMenuChoice(1, 7);
                 Console.Clear();
+
                 switch (mainMenuUserChoice)
                 {
                     case 1:
@@ -135,10 +144,13 @@ namespace MemeApp.Cons
                             Console.WriteLine($"Ошибка: {errorInAdd}");
                         }
                         break;
+
                     case 2:
                         Console.WriteLine("Удаление мема");
                         Console.WriteLine("\nВсе мемы:");
-                        Console.WriteLine(logic.FormatMemesTable());
+                        var memes = logic.GetAllMemes();
+                        string table = ConsoleTableFormatter.FormatTable(memes);
+                        Console.WriteLine(table);
 
                         int deleteMenuChoice = ReadInt("Введите id мема для его удаления или 0, чтобы выйти в меню: ");
                         if (deleteMenuChoice == 0)
@@ -159,7 +171,9 @@ namespace MemeApp.Cons
                     case 3:
                         Console.WriteLine("Изменение мема");
                         Console.WriteLine("\nВсе мемы:");
-                        Console.WriteLine(logic.FormatMemesTable());
+                        // Заново получаем актуальную таблицу для изменения
+                        var memesForUpdate = logic.GetAllMemes();
+                        Console.WriteLine(ConsoleTableFormatter.FormatTable(memesForUpdate));
 
                         int updateId = ReadInt("Введите id мема для его изменения или 0, чтобы выйти в меню:");
                         if (updateId == 0)
@@ -172,16 +186,15 @@ namespace MemeApp.Cons
                         string newName = Console.ReadLine().Trim();
 
                         string newCategory = AskCategory();
-
                         bool newIsActual = ReadBool("Мем актуален?");
 
-                        if (logic.UpdateMeme(updateId, newName, newCategory, newIsActual, out string errorInIpdate))
+                        if (logic.UpdateMeme(updateId, newName, newCategory, newIsActual, out string errorInUpdate))
                         {
                             Console.WriteLine("Мем успешно изменён");
                         }
                         else
                         {
-                            Console.WriteLine($"Ошибка: {errorInIpdate}");
+                            Console.WriteLine($"Ошибка: {errorInUpdate}");
                         }
                         break;
 
@@ -203,7 +216,8 @@ namespace MemeApp.Cons
 
                     case 5:
                         Console.WriteLine("Список всех мемов");
-                        Console.WriteLine(logic.FormatMemesTable());
+                        var allMemes = logic.GetAllMemes();
+                        Console.WriteLine(ConsoleTableFormatter.FormatTable(allMemes));
                         break;
 
                     case 6:
